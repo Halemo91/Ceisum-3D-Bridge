@@ -1,0 +1,72 @@
+<html>
+<body>
+<style type="text/css">
+<style>
+table {
+    width:100%;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+	color:white;
+}
+table#t01 tr:nth-child(even) {
+    background-color: #eee;
+}
+table#t01 tr:nth-child(odd) {
+   background-color:white;
+}
+table#t01 th	{
+    background-color: white;
+    color: white;
+}
+</style>
+</style>
+		  <script>
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      myFunction(xhttp);
+	  
+    }
+  };
+  xhttp.open("GET", "http://localhost:8080/Apps/demo.xml", true);
+  xhttp.send();
+}
+function myFunction(xml) {
+  var i;
+  var xmlDoc = xml.responseXML;
+  var table="<tr><th>Sensor Name</th><th>Sensor Coordinates</th></tr>";
+  var x = xmlDoc.getElementsByTagName("System");
+  for (i = 0; i <x.length; i++) { 
+    table += "<tr><td>" +
+
+	 x[i].getElementsByTagName("name")[0].childNodes[0].nodeValue +
+    "</td><td> " +
+    x[i].getElementsByTagName("coordinates")[0].childNodes[0].nodeValue +
+   "</td></tr>";
+  }
+  document.getElementById("demo").innerHTML = table;
+}
+
+ function hideshow() {
+        document.getElementById('b').style.display = 'none'; 
+      
+    }
+</script>
+
+  
+
+<button id="b" type="button" onclick="loadDoc();hideshow()">Get my sensor </button>
+
+<table id="demo"></table>
+
+
+
+</body>
+</html>

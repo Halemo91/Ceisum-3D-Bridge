@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Hannah" >
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/portfolio-item.css" rel="stylesheet">
+
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version (or Chrome Frame if pre-IE11). -->
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <title>Berlin 3D Streaming</title>
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <script src="../Build/Cesium/Cesium.js"></script>
+  
+  <style>
+      @import url(../Build/Cesium/Widgets/widgets.css);
+      html, body, #cesiumContainer {
+          width: 100%; height: 150%; margin: 30; padding: 88; overflow: hidden;
+      }
+  </style>
+</head>
+<body>
+<!-- Navigation -->
+  
+
+
+<!-- Page Content -->
+    <div class="container" align ="center">
+
+        <!-- Portfolio Item Heading -->
+      
+
+        <div class="row">
+            <div class="col-lg-12">
+        <h1 class="page-header">3D Streaming for all Berlin buildings</h1> 
+            </div>
+        </div>
+
+        <div class="col-md-12" align="right">
+          <div id="cesiumContainer" align="right">
+		
+
+		  
+		  <script>
+function loadDoc() {
+console.log("ssssssssssssss");
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      myFunction(xhttp);
+	  
+    }
+  };
+  xhttp.open("GET", "http://localhost:8080/Apps/demo.xml", true);
+  xhttp.send();
+}
+function myFunction(xml) {
+  var i;
+  var xmlDoc = xml.responseXML;
+  var table="<tr><th>coord</th><th>sensor name</th></tr>";
+  var x = xmlDoc.getElementsByTagName("System");
+  for (i = 0; i <x.length; i++) { 
+    table += "<tr><td>" +
+    x[i].getElementsByTagName("coordinates")[0].childNodes[0].nodeValue +
+    "</td><td> " +
+ x[i].getElementsByTagName("name")[0].childNodes[0].nodeValue +
+   "</td></tr>";
+  }
+  document.getElementById("demo").innerHTML = table;
+}
+document.ontouchmove = function(e) {e.preventDefault()};
+
+var extent = Cesium.Rectangle.fromDegrees( 13.325500,52.512746, 13.328177, 52.512963);
+  //var extent = Cesium.Rectangle.fromDegrees(13.327, 52.5121, 13.328, 52.5124);
+
+Cesium.Camera.DEFAULT_VIEW_FACTOR=0;
+Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
+var viewer ;
+
+try {
+    
+	viewer = new Cesium.Viewer('cesiumContainer', {
+		"timeline":true,
+		"animation":false, 
+		"baseLayerPicker":true,
+		"geocoder":false,									
+		"infoBox":true,
+		"sceneModePicker":false,
+		"selectionIndicator":true,
+		"navigationHelpButton":true,
+		"navigationInstructionsInitiallyVisible":true,
+		"scene3DOnly":true });		 
+} catch (exception) {
+	document.getElementById("loadingIndicator").style.display = 'none';    
+    console.error(exception);
+    if (!document.querySelector('.cesium-widget-errorPanel')) {
+        window.alert(exception);
+    }
+}
+var Bridge_position = Cesium.Cartesian3.fromDegrees( 13.330921,52.513758);
+var Bridge_heading = Cesium.Math.toRadians(32.0);
+var Bridge_pitch = Cesium.Math.toRadians(0.0);
+var Bridge_roll = Cesium.Math.toRadians(0.0);
+var Bridge_orientation = Cesium.Transforms.headingPitchRollQuaternion(Bridge_position, Bridge_heading, Bridge_pitch, Bridge_roll);
+
+var Bridge = viewer.entities.add({
+	name : 'Bridge',
+    position : Bridge_position ,
+	orientation : Bridge_orientation,
+    model : {
+         uri : '../../Apps/Model_Data/brrrr.gltf'
+    }
+});
+Bridge.description = '\
+<p>\
+ TU Bridge Model\
+</p>\
+  Source: \
+  <a style="color: WHITE"\
+    target="_blank"\
+    href="http://quader.igg.tu-berlin.de/istsos/admin/">Info</a>';
+	
+	
+var Sensor = viewer.entities.add({
+    name : 'Sensor',
+    position: Cesium.Cartesian3.fromDegrees(13.3308392,52.5133892,19.03),
+    ellipsoid : {
+        radii : new Cesium.Cartesian3(1.0, 1.0, 1.0),
+        material : Cesium.Color.WHITE.withAlpha(0.1),
+        outline : true,
+		outlineColor : Cesium.Color.RED
+    }
+});
+Sensor.description = Sensor.description =  '  \
+<iframe  width="380" height="200" src ="xmlloading.html" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"> </iframe> \
+<br>\
+  <a style="color: WHITE"\
+    target="_blank"\
+    href="http://quader.igg.tu-berlin.de/istsos/admin/">More Info</a>';
+	
+
+var canvas =  viewer.scene.canvas;
+
+var scene = viewer.scene;
+
+
+var dataSources = {};
+
+var getTileStructure = function(){    	
+	var tilesToRender = scene.globe._surface._tilesToRender;
+	var tiles = [];
+	for(var i = 0; i < tilesToRender.length; i++){
+		if(tilesToRender[i].level >= maxLevel){
+    		var tile = {
+    					bbox:[tilesToRender[i].rectangle.west,
+    					      tilesToRender[i].rectangle.south,
+    					      tilesToRender[i].rectangle.east,
+    					      tilesToRender[i].rectangle.north], 
+    					level:tilesToRender[i]._level, 
+    					distance:tilesToRender[i]._distance    		
+    		}
+    		tiles.push(tile);
+		}
+	}    	
+	return tiles;
+}
+var worker = new Worker('TilesWorkerTiled.js');
+
+worker.addEventListener('message', function(e) {
+	var data = e.data;
+	
+
+
+	  switch (data.cmd) {
+	    case 'add':
+	
+	    	var id =  data.data.id;
+	    var url = data.data.url;
+	    	var x =data.data.x;  
+	    	var y = data.data.y;
+	    	var z = data.data.z;
+			//var lengtth = Math.min(url.length,x.length,y.length);
+				
+    		var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+        		    Cesium.Cartesian3.fromDegrees(x, y, 0.0));
+    		dataSources[id] =  scene.primitives.add(Cesium.Model.fromGltf({
+    		    	url : url,
+    		    	modelMatrix : modelMatrix,		 
+    		    	scale : 1, 
+					allowPicking:true
+    			})				
+			)    ;
+			viewer.entities.add(Bridge);
+			viewer.entities.add(Sensor);
+			
+	    	break;
+	    case 'remove':
+	    var ids =  data.ids;
+	    	var counter = 0;
+	    	for(var i = 0; i < ids.length; i++){
+	    		var id = ids[i];
+    	    	if(dataSources.hasOwnProperty(id)){
+    	    		scene.primitives.remove(dataSources[id]);
+    	    		delete dataSources[id];
+					viewer.entities.remove(Bridge);
+					delete Bridge ;
+					viewer.entities.remove(Sensor);
+					delete Sensor ;
+    	    		counter++
+    	    	}
+	  		}
+					
+					
+	  		
+	    	break;
+	  }    
+}, false);
+   
+worker.postMessage({'cmd':'initialize', 'url':'http://hosting.virtualcitysystems.de/demos/berlin/cesium/data/collada.json'});
+
+viewer.scene.postRender.addEventListener(function(scene, time)  {
+	worker.postMessage({'cmd':'postRender'});
+});
+
+var camera = viewer.camera;
+var removeEnd = camera.moveEnd.addEventListener(function() {
+	console.log("cameraListenerEnd");
+	worker.postMessage({'cmd':'tileStructureChanged', "tiles":getTileStructure(), "maxLevel":maxLevel, "maxModels":maxModels});
+});
+
+
+var showLoadError = function(name, error) {
+    var title = 'An error occurred while loading the file: ' + name;
+    var message = 'An error occurred while loading the file, which may indicate that it is invalid.  A detailed error report is below:';
+    viewer.cesiumWidget.showErrorPanel(title, message, error);
+};
+
+
+// add copyright information for berlin model
+viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('EFRE', 'http://81.169.167.246/images/opendata/efre.png', 'http://www.berlin.de/sen/wirtschaft/gruenden-und-foerdern/europaeische-strukturfonds/'));
+viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('EU', 'http://81.169.167.246/images/opendata/EU_efre_weiss.png', 'http://www.berlin.de/sen/wirtschaft/gruenden-und-foerdern/europaeische-strukturfonds/'));
+viewer.scene.frameState.creditDisplay.addDefaultCredit(new Cesium.Credit('Im Auftrag der Senatsverwaltung für Wirtschaft, Technologie und Forschung, gefördert aus dem Europäischen Fonds für Regionale Entwicklung (EFRE).'));
+
+          
+	 
+
+
+
+  
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+var maxLevel = parseInt(getParameterByName("maxLevel"));
+var maxModels = parseInt(getParameterByName("maxModels"));
+
+if(isNaN(maxLevel)){
+	maxLevel = 16;
+}
+console.log("Set MaxLevel to " + maxLevel);
+if(isNaN(maxModels)){
+	maxModels = 500;
+}
+console.log("Set MaxModels to " + maxModels);
+
+//loadingIndicator.style.display = 'block';
+
+		
+
+
+</script>
+          </div>
+        </div>
+          
+
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery Version 1.11.0 -->
+    <script src="js/jquery-1.11.0.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+</body>
+</html>

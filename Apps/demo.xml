@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML xmlns:gml="http://www.opengis.net/gml" xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.1" xmlns="http://www.opengis.net/sensorML/1.0.1" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd"><sml:member>
+            <sml:System gml:id="mpu6050-1">
+                <gml:description>local test</gml:description>
+                <gml:name>mpu6050-1</gml:name>
+                <sml:keywords>
+                    <sml:KeywordList>
+                        <sml:keyword>IMU</sml:keyword>
+                    </sml:KeywordList>
+                </sml:keywords>
+                <sml:identification>
+                    <sml:IdentifierList>
+                        <sml:identifier name="uniqueID">
+                            <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                                <sml:value>0013a20040b5558d</sml:value>
+                            </sml:Term>
+                        </sml:identifier>
+                    </sml:IdentifierList>
+                </sml:identification>
+                <sml:classification>
+                    <sml:ClassifierList>
+                        <sml:classifier name="System Type">
+                            <sml:Term definition="urn:ogc:def:classifier:x-istsos:1.0:systemType">
+                                <sml:value>insitu-fixed-point</sml:value>
+                            </sml:Term>
+                        </sml:classifier>
+                        <sml:classifier name="Sensor Type">
+                            <sml:Term definition="urn:ogc:def:classifier:x-istsos:1.0:sensorType">
+                                <sml:value>mpu6050</sml:value>
+                            </sml:Term>
+                        </sml:classifier>
+                    </sml:ClassifierList>
+                </sml:classification>
+                <sml:capabilities>
+                    <swe:DataRecord />
+                </sml:capabilities>
+                <sml:location>
+                    <gml:Point srsName="EPSG:4326" gml:id="bridge">
+                        <gml:coordinates>52.5133892,13.3308392,19.03</gml:coordinates>
+                    </gml:Point>
+                </sml:location>
+                <sml:outputs>
+                    <sml:OutputList>
+                        <sml:output name="output data">
+                            <swe:DataRecord definition="urn:ogc:def:dataType:x-istsos:1.0:timeSeries"><swe:field name="Time"><swe:Time definition="urn:ogc:def:parameter:x-istsos:1.0:time:iso8601" /></swe:field><swe:field name="Raw AX"><swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:raw:ax"><swe:uom code="raw" /></swe:Quantity></swe:field><swe:field name="Raw AY"><swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:raw:ay"><swe:uom code="raw" /></swe:Quantity></swe:field><swe:field name="Raw AZ"><swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:raw:az"><swe:uom code="raw" /></swe:Quantity></swe:field><swe:field name="Raw GX"><swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:raw:gx"><swe:uom code="raw" /></swe:Quantity></swe:field><swe:field name="Raw GY"><swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:raw:gy"><swe:uom code="raw" /></swe:Quantity></swe:field><swe:field name="Raw GZ"><swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:raw:gz"><swe:uom code="raw" /></swe:Quantity></swe:field><swe:field name="Temperature"><swe:Quantity definition="urn:ogc:def:parameter:x-istsos:1.0:degrees:celsius"><swe:uom code="\u00B0\u0043" /></swe:Quantity></swe:field></swe:DataRecord></sml:output>
+                    </sml:OutputList>
+                </sml:outputs>
+            </sml:System>
+        </sml:member>
+    </sml:SensorML>
